@@ -1,11 +1,15 @@
 package me.sanura_njaka.parstagram;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -21,84 +25,51 @@ import me.sanura_njaka.parstagram.model.Post;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private static final String imagePath = "/storage/emulated/0/DCIM/Camera/IMG_20180710_131852.jpg";
-    private EditText descriptionInput;
+    private Button homeButton;
     private Button createButton;
-    private Button refreshButton;
+    private Button profileButton;
+    private FrameLayout flContainer;
+
+    Fragment timelineFragment = new TimelineFragment();
+    Fragment createFragment = new CreateFragment();
+    Fragment profileFragment = new ProfileFragment();
+
+    FragmentTransaction ft;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        descriptionInput = findViewById(R.id.etDescription);
+        homeButton = findViewById(R.id.btnHome);
         createButton = findViewById(R.id.btnCreate);
-        refreshButton = findViewById(R.id.btnRefresh);
+        profileButton = findViewById(R.id.btnProfile);
+        flContainer = findViewById(R.id.flPlaceholder);
+
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        ft = fragmentManager.beginTransaction();
+
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ft.replace(R.id.flPlaceholder, timelineFragment);
+                ft.commit();
+            }
+        });
 
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String description = descriptionInput.getText().toString();
-                final ParseUser user = ParseUser.getCurrentUser();
-
-                final File file = new File(imagePath);
-                final ParseFile parseFile = new ParseFile(file);
-
-                parseFile.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            createPost(description, parseFile, user);
-                        } else {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                ft.replace(R.id.flPlaceholder, createFragment);
+                ft.commit();
             }
         });
-        refreshButton.setOnClickListener(new View.OnClickListener() {
+
+        profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadTopPosts();
-            }
-        });
-    }
-
-    private void createPost(String description, ParseFile imageFile, ParseUser user) {
-        final Post newPost = new Post();
-        newPost.setDescription(description);
-        newPost.setImage(imageFile);
-        newPost.setUser(user);
-
-        newPost.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d("HomeActivity", "Create post success!");
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void loadTopPosts() {
-        final Post.Query postsQuery = new Post.Query();
-        postsQuery.getTop().withUser();
-
-        postsQuery.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> objects, ParseException e) {
-                if (e == null) {
-                    for (int i = 0; i < objects.size(); i++) {
-                        Log.d("HomeActivity", "Post[" + i + "] = "
-                                + objects.get(i).getDescription()
-                                + "\nusername = "
-                                + objects.get(i).getUser().getUsername());
-                    }
-                } else {
-                    e.printStackTrace();
-                }
+                ft.replace(R.id.flPlaceholder, profileFragment);
+                ft.commit();
             }
         });
     }
