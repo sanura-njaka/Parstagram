@@ -1,21 +1,15 @@
 package me.sanura_njaka.parstagram;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -53,14 +47,14 @@ public class TimelineFragment extends Fragment {
         rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
         rvPosts.setAdapter(postAdapter);
 
-        loadTopPosts();
+        loadTopPosts(false);
 
         swipeContainer = view.findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 postAdapter.clear();
-                loadTopPosts();
+                loadTopPosts(true);
             }
         });
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright);
@@ -68,7 +62,7 @@ public class TimelineFragment extends Fragment {
 
     }
 
-    private void loadTopPosts() {
+    private void loadTopPosts(boolean refresh) {
         final Post.Query postsQuery = new Post.Query();
         postsQuery.getTop().withUser();
 
@@ -76,8 +70,6 @@ public class TimelineFragment extends Fragment {
             @Override
             public void done(List<Post> objects, ParseException e) {
                 if (e == null) {
-                    Toast.makeText(getContext(), "There are " + objects.size() + " posts.", Toast.LENGTH_SHORT).show();
-
                     postAdapter.addAll(objects);
                     postAdapter.notifyDataSetChanged();
                 } else {
@@ -86,7 +78,9 @@ public class TimelineFragment extends Fragment {
             }
         });
 
-        //swipeContainer.setRefreshing(false);
+        if (refresh) {
+            swipeContainer.setRefreshing(false);
+        }
     }
 
     @Override
