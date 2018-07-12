@@ -6,8 +6,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.sanura_njaka.parstagram.model.Post;
 
@@ -36,7 +41,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         Post post = posts.get(i);
 
         //TODO: populate the views according to this data
-
+        viewHolder.tvUsername.setText(post.getUser().getUsername().toString());
     }
 
     @Override
@@ -44,10 +49,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         return posts.size();
     }
 
+    public void clear() {
+        posts.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addAll(List<Post> objects) {
+        posts.addAll(objects);
+        notifyDataSetChanged();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        public ImageView ivProfileImage;
+        public ImageView ivPhoto;
+        public TextView tvUsername;
+        public TextView tvDescription;
 
         public ViewHolder(View itemView) {
             super(itemView);
+
+            tvUsername = itemView.findViewById(R.id.tvUsername);
         }
 
         @Override
