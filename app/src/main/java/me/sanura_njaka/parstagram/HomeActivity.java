@@ -19,6 +19,8 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.parse.ParseUser;
+
 import java.io.File;
 
 public class HomeActivity extends AppCompatActivity {
@@ -38,6 +40,12 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        if (currentUser == null) {
+            final Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
