@@ -9,11 +9,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+
 import org.w3c.dom.Text;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import me.sanura_njaka.parstagram.model.Post;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
@@ -40,8 +47,32 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         Post post = posts.get(i);
 
-        //TODO: populate the views according to this data
         viewHolder.tvUsername.setText(post.getUser().getUsername().toString());
+        viewHolder.tvDescription.setText(post.getDescription().toString());
+        viewHolder.tvTime.setText(post.getFormattedTime() + " ago");
+
+        File profilePic = null;
+        File postedPic = null;
+
+        try {
+            profilePic = post.getUser().getParseFile("profile_pic").getFile();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            postedPic = post.getImage().getFile();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Glide.with(context)
+                .load(profilePic)
+                .apply(RequestOptions.bitmapTransform(new RoundedCornersTransformation(50, 0)))
+                .into(viewHolder.ivProfileImage);
+        Glide.with(context)
+                .load(postedPic)
+                .into(viewHolder.ivPicture);
     }
 
     @Override
@@ -62,14 +93,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public ImageView ivProfileImage;
-        public ImageView ivPhoto;
+        public ImageView ivPicture;
         public TextView tvUsername;
         public TextView tvDescription;
+        public TextView tvTime;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
+            ivProfileImage = itemView.findViewById(R.id.ivSmallProfilePic);
+            ivPicture = itemView.findViewById(R.id.ivPhoto);
             tvUsername = itemView.findViewById(R.id.tvUsername);
+            tvDescription = itemView.findViewById(R.id.tvDescription);
+            tvTime = itemView.findViewById(R.id.tvTime);
         }
 
         @Override

@@ -15,6 +15,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import me.sanura_njaka.parstagram.model.Post;
@@ -70,6 +71,7 @@ public class TimelineFragment extends Fragment {
             @Override
             public void done(List<Post> objects, ParseException e) {
                 if (e == null) {
+                    Collections.reverse(objects);
                     postAdapter.addAll(objects);
                     postAdapter.notifyDataSetChanged();
                 } else {
