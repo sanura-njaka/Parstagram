@@ -3,6 +3,7 @@ package me.sanura_njaka.parstagram;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -34,7 +35,7 @@ public class HomeActivity extends AppCompatActivity {
     public final String APP_TAG = "MyCustomApp";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     public String photoFileName = "photo.jpg";
-    File photoFile;
+    public File photoFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class HomeActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.flContainer, timelineFragment);
         fragmentTransaction.commit();
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        final BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -62,13 +63,16 @@ public class HomeActivity extends AppCompatActivity {
 
                         switch (item.getItemId()) {
                             case R.id.action_timeline:
+                                //item.setIcon(Drawable.createFromPath("@drawable/ic_home_filled"));
                                 fragmentTransaction.replace(R.id.flContainer, timelineFragment).commit();
                                 return true;
                             case R.id.action_create:
+                                //item.setIcon(Drawable.createFromPath("@drawable/ic_new_post_filled"));
                                 fragmentTransaction.replace(R.id.flContainer, createFragment).commit();
                                 onLaunchCamera();
                                 return true;
                             case R.id.action_profile:
+                                //item.setIcoon(Drawable.createFromPath("@drawable/ic_profile_filled"));
                                 fragmentTransaction.replace(R.id.flContainer, profileFragment).commit();
                                 return true;
                         }
@@ -129,6 +133,7 @@ public class HomeActivity extends AppCompatActivity {
                 Bitmap resizedBitmap = BitmapScalar.scaleToFitWidth(rawTakenImage, 400);
                 ((CreateFragment) createFragment).ivPhoto.setImageBitmap(resizedBitmap);
 
+                ((CreateFragment) createFragment).sendFilePath(imagePath);
 
             } else { // Result was a failure
                 Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
