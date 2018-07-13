@@ -24,13 +24,14 @@ import com.parse.ParseUser;
 
 import java.io.File;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements CreateFragment.HomeActivityListener {
 
     Fragment timelineFragment = new TimelineFragment();
     Fragment createFragment = new CreateFragment();
     Fragment profileFragment = new ProfileFragment();
 
     FragmentTransaction fragmentTransaction;
+    BottomNavigationView bottomNavigationView;
 
     public final String APP_TAG = "MyCustomApp";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
@@ -53,7 +54,7 @@ public class HomeActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.flContainer, timelineFragment);
         fragmentTransaction.commit();
 
-        final BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -139,5 +140,10 @@ public class HomeActivity extends AppCompatActivity {
                 Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void switchToTimeline() {
+        bottomNavigationView.setSelectedItemId(R.id.action_timeline);
     }
 }

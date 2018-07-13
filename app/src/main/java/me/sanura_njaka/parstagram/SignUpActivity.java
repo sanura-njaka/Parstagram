@@ -15,6 +15,8 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
+import java.io.File;
+
 public class SignUpActivity extends AppCompatActivity {
 
     private EditText usernameInput;
@@ -58,7 +60,8 @@ public class SignUpActivity extends AppCompatActivity {
         user.setUsername(username);
         user.setPassword(password);
         user.setEmail(email);
-        //user.put("profile_pic", );
+        //HomeActivity.getPhotoFileUri("IMG_3245.jpg");
+       //user.put("profile_pic", new File("/Users/sanura/Downloads/IMG_3245.jpg"));
 
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {

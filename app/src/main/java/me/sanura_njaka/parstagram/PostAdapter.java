@@ -49,7 +49,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
         viewHolder.tvUsername.setText(post.getUser().getUsername().toString());
         viewHolder.tvDescription.setText(post.getDescription().toString());
-        viewHolder.tvTime.setText(post.getFormattedTime() + " ago");
+
+        String formattedTime = post.getFormattedTime();
+
+        if (formattedTime != "Just now") {
+            formattedTime += " ago";
+        }
+        viewHolder.tvTime.setText(formattedTime);
 
         File profilePic = null;
         File postedPic = null;

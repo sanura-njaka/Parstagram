@@ -1,22 +1,25 @@
 package me.sanura_njaka.parstagram;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.io.File;
 
@@ -27,6 +30,8 @@ public class CreateFragment extends Fragment {
     ImageView ivPhoto;
     Button btnPost;
     String filePath;
+    EditText etDescription;
+    HomeActivityListener listener;
 
     public CreateFragment() {
         // Required empty public constructor
@@ -44,13 +49,13 @@ public class CreateFragment extends Fragment {
 
         ivPhoto = view.findViewById(R.id.ivPhoto);
         btnPost = view.findViewById(R.id.btnPost);
+        etDescription = view.findViewById(R.id.etDescription);
 
         btnPost.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                EditText etDescription = view.findViewById(R.id.etDescription);
-                String description = etDescription.getText().toString();
+                final String description = etDescription.getText().toString();
                 etDescription.setText("");
 
                 ParseFile file = new ParseFile(new File(filePath));
@@ -60,8 +65,17 @@ public class CreateFragment extends Fragment {
                 newPost.setUser(ParseUser.getCurrentUser());
                 newPost.setImage(file);
 
-                final Intent intent = new Intent(getContext(), LoginActivity.class);
-                startActivity(intent);
+                newPost.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            Log.d("CreateFragment", "Create post success!");
+                            listener.switchToTimeline();
+                        } else {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
     }
@@ -78,5 +92,21 @@ public class CreateFragment extends Fragment {
 
     public void sendFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public interface HomeActivityListener {
+        void switchToTimeline();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if(context instanceof HomeActivityListener) {
+            listener = (HomeActivityListener) context;
+        } else {
+            throw new ClassCastException(context.toString()
+                    + "must implement CreateFragment.HomeActivityListener");
+        }
     }
 }
