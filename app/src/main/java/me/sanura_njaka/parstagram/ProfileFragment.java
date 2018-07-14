@@ -12,9 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import org.w3c.dom.Text;
@@ -47,8 +52,17 @@ public class ProfileFragment extends Fragment {
 
         tvUsername = view.findViewById(R.id.tvUsername);
         btnLogout = view.findViewById(R.id.btnLogout);
+        ImageView ivProfilePic = view.findViewById(R.id.ivProfile);
 
         tvUsername.setText(ParseUser.getCurrentUser().getUsername());
+        try {
+            Glide.with(view)
+                    .load(ParseUser.getCurrentUser().getParseFile("profile_pic").getFile())
+                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                    .into(ivProfilePic);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         btnLogout.setOnClickListener(new View.OnClickListener() {
 

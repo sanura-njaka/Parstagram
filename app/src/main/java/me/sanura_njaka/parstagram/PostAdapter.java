@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -29,6 +30,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     Context context;
 
     public PostAdapter(ArrayList<Post> posts) {
+
         this.posts = posts;
     }
 
@@ -74,7 +76,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
         Glide.with(context)
                 .load(profilePic)
-                .apply(RequestOptions.bitmapTransform(new RoundedCornersTransformation(50, 0)))
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(viewHolder.ivProfileImage);
         Glide.with(context)
                 .load(postedPic)
